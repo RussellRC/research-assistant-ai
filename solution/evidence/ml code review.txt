@@ -1,0 +1,292 @@
+(.venv) russell research-assistant-ai % cd solution
+(.venv) russell solution % python main.py
+
+================================================================================
+AI RESEARCH ASSISTANT
+================================================================================
+
+ Configuration:
+   Project ID: a5130281-u4999031-1780956589
+   Location: us-central1
+   Model: gemini-2.5-flash
+
+🔧 Initializing genai.Client...
+   Using Vertex AI authentication...
+   ✓ Client initialized with Vertex AI
+
+📝 Sample Research Queries:
+   1. How does machine learning improve code review efficiency?
+
+💡 To research a different topic:
+   • Edit queries list in main.py
+   • Or set RESEARCH_QUERY environment variable
+   • Example: export RESEARCH_QUERY='Your custom question here'
+
+🎯 Running research workflow for query 1...
+
+================================================================================
+AI RESEARCH ASSISTANT - EXECUTION
+================================================================================
+
+ Research Query: How does machine learning improve code review efficiency?
+   Pattern: SequentialAgent
+   Execution: (ADK agents + agent.run_async())
+   Model: gemini-2.5-flash
+
+--------------------------------------------------------------------------------
+STAGE 1: Domain Classification
+--------------------------------------------------------------------------------
+   ✓ Domain: computer_science
+   ✓ Confidence: 0.98
+   ✓ Complexity: medium
+   ✓ Recommended sources: arxiv, scholar, web, ACM Digital Library, IEEE Xplore
+
+--------------------------------------------------------------------------------
+STAGE 2: Source Gathering
+--------------------------------------------------------------------------------
+
+ Source Gathering: How does machine learning improve code review efficiency?...
+   Pattern: ADK ParallelAgent + SequentialAgent
+   Created SequentialAgent: source_gathering_workflow
+   Type: SequentialAgent
+   Sub-agents: 2
+   Stage 1 (ParallelAgent): parallel_searches
+      → Type: ParallelAgent
+      → Sub-agents: 3 parallel searches
+   Stage 2 (Aggregator): source_aggregator
+
+   Executing workflow logic (execution)...
+
+   Stage 1: ParallelAgent (fan-out)
+      → web_search running...
+      ✓ web_search: Found 7 sources
+      → arxiv_search running...
+      ✓ arxiv_search: Found 7 sources
+      → scholar_search running...
+      ✓ scholar_search: Found 7 sources
+
+   Stage 2: Aggregator (fan-in)
+      → source_aggregator aggregating results...
+JSONDecodeError in SourceAggregatorAgent.aggregate: Unterminated string starting at: line 104 column 16 (char 8296) | Content: {
+  "total_sources": 21,
+  "unique_sources": 21,
+  "top_sources": [
+    {
+      "title": "Machine Learning in Code Review: Boosting Efficiency and Quality",
+      "type": "web",
+      "url": "https://www.techinsights.com/blog/ml-code-review-efficiency-quality",
+      "relevance_score": 0.98,
+      "snippet": "Discover how machine learning algorithms are revolutionizing the code review process by automating mundane tasks and identifying potential issues early. This article explores various ML applications, from defect prediction to intelligent suggestion systems, significantly reducing review time and enhancing code quality."
+    },
+    {
+      "title": "LLM-Assisted Code Review: An Empirical Study on Efficiency and Quality Improvements",
+      "type": "arxiv",
+      "url": "https://arxiv.org/abs/2401.09876",
+      "relevance_score": 0.96,
+      "snippet": "Large Language Models (LLMs) are increasingly being explored for various software engineering tasks. We present an empirical study on the effectiveness of LLMs in assisting code review, focusing on their ability to generate constructive feedback and identify potential bugs. Our findings indicate that LLM integration can reduce review time and improve the quality of feedback, though human oversight remains crucial for complex scenarios."
+    },
+    {
+      "title": "Automated Code Review with AI: A Developer's Guide",
+      "type": "web",
+      "url": "https://dev.to/ai_in_dev/automated-code-review-with-ai-a-developers-guide-1b5c",
+      "relevance_score": 0.95,
+      "snippet": "Explore practical ways AI and machine learning can be integrated into your code review workflow to catch bugs, enforce style guidelines, and suggest refactorings. This guide covers popular tools and frameworks that leverage ML to make code reviews less tedious and more effective for development teams."
+    },
+    {
+      "title": "Leveraging Deep Learning for Automated Defect Prediction in Code Review Workflows",
+      "type": "arxiv",
+      "url": "https://arxiv.org/abs/2311.01234",
+      "relevance_score": 0.95,
+      "snippet": "This paper investigates the application of deep learning models to automatically predict potential defects during the code review process. We propose a novel neural network architecture that analyzes code changes and reviewer comments to flag high-risk areas. Our experimental results demonstrate a significant reduction in manual effort required for identifying critical issues, thereby enhancing review efficiency and software quality."
+    },
+    {
+      "title": "Machine Learning-Enhanced Defect Prediction for Efficient Code Review",
+      "type": "scholar",
+      "url": "https://scholar.google.com/citations?user=exampleID&hl=en&oi=sres",
+      "relevance_score": 0.95,
+      "snippet": "This paper proposes a novel machine learning framework for predicting potential defects in code changes before review. By integrating historical data and code metrics, the system helps reviewers focus on high-risk areas, significantly reducing review time and improving defect detection rates."
+    },
+    {
+      "title": "The Role of AI in Modern Software Development: Beyond Automated Testing",
+      "type": "web",
+      "url": "https://www.infoq.com/articles/ai-software-development-code-review/",
+      "relevance_score": 0.93,
+      "snippet": "While AI is well-known for testing, its application in code review is rapidly gaining traction. This piece discusses how ML-powered tools offer intelligent suggestions, enforce coding standards, and even learn from past reviews to provide personalized feedback, significantly speeding up the review process."
+    },
+    {
+      "title": "Enhancing Code Review Efficiency through Machine Learning-Powered Comment Prioritization",
+      "type": "arxiv",
+      "url": "https://arxiv.org/abs/2402.05678",
+      "relevance_score": 0.93,
+      "snippet": "Code reviews often generate a large volume of comments, making it challenging for developers to prioritize feedback effectively. We introduce a machine learning approach that classifies and prioritizes review comments based on their severity and impact. This system helps reviewers and authors focus on the most critical suggestions first, streamlining the review process and reducing cognitive load, leading to faster iteration cycles."
+    },
+    {
+      "title": "CodeBERT for Automated Code Review Feedback Generation",
+      "type": "scholar",
+      "url": "https://scholar.google.com/citations?user=exampleID&hl=en&oi=sres",
+      "relevance_score": 0.93,
+      "snippet": "We introduce a novel approach using CodeBERT, a pre-trained language model for code, to automatically generate constructive feedback for code reviews. This system can alleviate reviewer burden and provide consistent, immediate suggestions, thereby streamlining the review process."
+    },
+    {
+      "title": "Improving Code Review Efficiency with Machine Learning-Based Defect Prediction",
+      "type": "web",
+      "url": "https://ieeexplore.ieee.org/document/9123456",
+      "relevance_score": 0.92,
+      "snippet": "This research paper investigates the effectiveness of machine learning models in predicting software defects prior to code review. By flagging high-risk changes, ML can help reviewers prioritize their efforts and focus on critical sections, thereby optimizing the entire review cycle."
+    },
+    {
+      "title": "Automating Code Reviewer Recommendation using Graph Neural Networks",
+      "type": "scholar",
+      "url": "https://scholar.google.com/citations?user=exampleID&hl=en&oi=sres",
+      "relevance_score": 0.92,
+      "snippet": "We present a graph neural network approach to intelligently recommend the most suitable reviewers for incoming code changes. This method considers reviewer expertise, past review history, and code similarity, leading to faster review assignments and more effective feedback cycles."
+    },
+    {
+      "title": "Integrating AI/ML into CI/CD for Smarter Code Reviews",
+      "type": "web",
+      "url": "https://www.jenkins.io/blog/2023/10/ai-ml-ci-cd-code-review/",
+      "relevance_score": 0.91,
+      "snippet": "This blog post from Jenkins explores how machine learning models can be seamlessly integrated into continuous integration/continuous delivery (CI/CD) pipelines to enhance code review efficiency. By automating preliminary checks and flagging potential issues before human review, ML accelerates the entire development cycle."
+    },
+    {
+      "title": "How GitHub Copilot and other AI tools streamline code reviews",
+      "type": "web",
+      "url": "https://www.zdnet.com/article/github-copilot-ai-code-review-efficiency/",
+      "relevance_score": 0.9,
+      "snippet": "Learn how new AI-powered coding assistants like GitHub Copilot are not just generating code but also contributing to more efficient code reviews. These tools can identify potential errors, suggest improvements, and even explain complex code segments, allowing human reviewers to focus on architectural and logical correctness."
+    },
+    {
+      "title": "A Systematic Review of Machine Learning Applications in Software Code Review",
+      "type": "arxiv",
+      "url": "https://arxiv.org/abs/2307.04321",
+      "relevance_score": 0.9,
+      "snippet": "This systematic literature review synthesizes current research on the application of machine learning techniques to enhance the software code review process. We analyze various ML-driven approaches, including defect prediction, comment classification, and reviewer recommendation. The review highlights common challenges, identifies promising future research directions, and discusses the tangible efficiency gains reported across different studies."
+    },
+    {
+      "title": "An Empirical Study on the Impact of AI-assisted Tools on Code Review Throughput",
+      "type": "scholar",
+      "url": "https://scholar.google.com/citations?user=exampleID&hl=en&oi=sres",
+      "relevance_score": 0.9,
+      "snippet": "This study investigates the practical implications of integrating AI-powered tools into real-world code review processes. We analyze data from several open-source projects, demonstrating how such tools can reduce review cycle times and improve reviewer satisfaction."
+    },
+    {
+      "title": "The Role of Predictive Models in Streamlining Large-Scale
+      ✓ Total: 21 sources
+      ✓ Unique: 21 sources
+      ✓ Top sources: 0
+   ✅ Workflow execution completed
+
+--------------------------------------------------------------------------------
+STAGE 3: Research Refinement
+--------------------------------------------------------------------------------
+
+ Research Loop: How does machine learning improve code review efficiency?...
+   Max Iterations: 3
+   Created LoopAgent: research_refinement_loop
+   Type: LoopAgent
+   Sub-agents: 2 (researcher + critic)
+
+   🔄 Executing LoopAgent logic (execution)...
+
+   Iteration 1/3
+      → researcher generating answer...
+      ✓ Answer generated (confidence: high)
+      → critic evaluating quality...
+      ✓ Quality: excellent (score: 0.95)
+      Quality threshold met - Loop terminated
+   LoopAgent execution completed (1 iterations)
+
+--------------------------------------------------------------------------------
+STAGE 4: Fact Checking (LlmAgent)
+--------------------------------------------------------------------------------
+   ✓ Credibility Score: 0.95
+   ✓ Verified Claims: 27
+   ✓ Questionable Claims: 0
+
+--------------------------------------------------------------------------------
+STAGE 5: Synthesis (LlmAgent)
+--------------------------------------------------------------------------------
+   ✓ Synthesis completed
+   ✓ Key Insights: 3
+   ✓ Themes: 3
+   ✓ Coherence Score: 0.90
+
+--------------------------------------------------------------------------------
+STAGE 6: Citation Generation (LlmAgent)
+--------------------------------------------------------------------------------
+   ✓ Citations formatted
+   ✓ Total Citations: 0
+   ✓ Style: APA
+
+================================================================================
+WORKFLOW COMPLETED
+================================================================================
+
+. All 7 stages executed successfully
+
+. Results Summary:
+   • Query: How does machine learning improve code review efficiency?
+   • Domain: computer_science
+   • Sources Found: 21
+   • Research Iterations: 1
+   • Credibility Score: 0.95
+   • Citations: 0
+
+  Execution Method:
+   ✓ All agents inherit from ADK base classes
+   ✓ Executed via agent.run_async() with genai.Client
+   ✓ No ADK server deployment required
+   ✓ Real LLM output from Vertex AI Gemini
+
+--------------------------------------------------------------------------------
+STAGE 7: Performance Evaluation
+--------------------------------------------------------------------------------
+   ✓ Execution Time: 100.48s
+   ✓ Performance Score: 0.95
+   ✓ Health Status: excellent
+   ✓ Queries Processed: 1
+   ⚠️  Bottlenecks Identified:
+      • Slow response times - optimize source gathering
+
+📄 Generating research report...
+   ✓ Report saved to: /Users/russell/Workspace/research-assistant-ai/solution/research_report.md
+
+================================================================================
+RESEARCH REPORT PREVIEW
+================================================================================
+
+# Research Report: How does machine learning improve code review efficiency?
+
+## Executive Summary
+Machine learning significantly boosts code review efficiency by automating defect detection, enforcing quality standards, and intelligently optimizing the review process, allowing human reviewers to focus on complex logical and architectural challenges.
+
+**Domain:** computer_science
+**Credibility Score:** 0.95/1.00
+**Sources Consulted:** 21
+**Research Iterations:** 1
+
+---
+
+## Research Findings
+
+Machine learning fundamentally transforms code review efficiency by automating routine tasks, augmenting human capabilities, and optimizing the review workflow. By analyzing extensive historical codebases, defect logs, and review comments, ML models discern intricate patterns indicative of potential issues, recommend improvements, and facilitate resource allocation. This integration of automation and intelligent assistance not only reduces the time commitment for reviews but also elevates the quality of feedback, enabling human reviewers to dedicate their expertise to complex logical challenges and architectural considerations.
+
+A primary mechanism through which ML enhances efficiency is the automated detection of defects, vulnerabilities, and style violations. ML models, trained on vast repositories, can proactively identify common anti-patterns, potential bugs (e.g., null pointers, resource leaks), and security vulnerabilities (e.g., SQL injection) with high accuracy, often before code reaches human review. This early and automated identification significantly reduces the manual effort required for spotting these issues, leading to earlier and cheaper bug fixes. Concurrently, ML-powered tools automate the enforcement of code quality and style guidelines, addressing issues like naming conventions and best practices. This offloads a substantial portion of the review burden related to superficial aspects, freeing human reviewers to concentrate on more critical logical and design
+
+... (report continues, total 5204 characters)
+
+Full report saved to: /Users/russell/Workspace/research-assistant-ai/solution/research_report.md
+
+================================================================================
+EXECUTION SUMMARY
+================================================================================
+
+  Workflow Metrics:
+   • Total Stages: 6
+   • Research Iterations: 1
+   • Sources Found: 21
+   • Credibility Score: 0.95
+   • Citations: 0
+
+ Execution successful!
+(.venv) russell solution %
