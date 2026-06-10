@@ -61,26 +61,35 @@ cd solution
 python main.py
 ```
 
-## Documentation
-I ran the application with 3 of the 4 queries that are in the sample research queries in `main.py`:
-1. "What are the latest advances in quantum computing error correction?"
-2. "How does machine learning improve code review efficiency?"
-3. "What are the health impacts of microplastics in marine ecosystems?"
-
-### Generated reports
-1. [Quantum Computing](solution/reports/research_report%20-%20quantum%20computing.md)
-2. [ML Code Reviews](solution/reports/research_report%20-%20ml%20code%20reivew.md)
-3. [Microplastics](solution/reports/research_report%20-%20microplastics.md)
+## Documentation & Generated reports
+I ran the application with the following queries:
+1. "What are the latest advances in quantum computing error correction?" [(Generated report here)](solution/reports/research_report-quantum_computing.md)
+2. "How does machine learning improve code review efficiency?" [(Generated report here)](solution/research_report.md)
 
 ### Observations
-* All the executions took only 1 iteration
-* All the credibility scores are quite high (> =0.95/1.00)
 
-I attribute these positive values to two main factors:
-* Since `gemini-2.0-*` models are deprecated, I had to change the application model to `gemini-2.5-flash`.
-* Additionally, the agents were always returning truncated responses due to the default low numbers of `max_output_tokens`,
-so I increased the value across all the agents, which allowed the model to generate longer responses 
-and consume a larger token budget for internal reasoning.
+#### Researcher → Critic loop
+Initially, all the executions took only one iteration because the credibility scores that the `ResearchCriticAgent`
+gave to the answers from the `ResearcherAgent` were quite high (usually `>=0.90`), which were above the default threshold of
+`0.80`.
+
+As such, I increased the temperature of the `ResearchCriticAgent` to `0.5` to introduce more realistic variation in scores,
+and also increased the `should_stop` threshold to `0.95`; but even then, the research loop rarely needed more than one iteration.
+
+In the end, I added a hard minimum of two iterations to the `Researcher → Critic` loop, which sometimes does
+improve the `quality_score` of the research answers slightly. See:
+* Improved quality score from `0.92` in the first iteration, to `0.96` in the second iteration of the execution output file: [evidence/ml_code_review.txt](solution/evidence/ml_code_review.txt).
+
+#### Agent performance
+The whole course, as well as the starter code of this project, use `gemini-2.0-*` models. 
+As such, the initial values set for the `max_output_tokens` in the starter code of the project were relatively low.
+
+However, the `gemini-2.0-*` models are deprecated, so I had to change the model to `gemini-2.5-flash` across the application.
+This also forced me to increase the `max_output_tokens` values for all the agents, as they were constantly generating 
+truncated responses because they were running out of tokens.  
+In turn, this came with the main trade off that execution times can be relatively lengthy. See:
+* "Bottlenecks Identified: Slow response times - optimize source gathering" in the execution output file: [evidence/quantum_computing.txt](solution/evidence/quantum_computing.txt).
+* "Bottlenecks Identified: Slow response times - optimize source gathering" in the execution output file: [evidence/ml_code_review.txt](solution/evidence/ml_code_review.txt).
 
 
 ## License

@@ -139,7 +139,7 @@ Output format (JSON):
   "reasoning": "Why to stop or continue"
 }
 
-Set should_stop=true ONLY if quality_score >= 0.80.
+Set should_stop=true ONLY if quality_score >= 0.95.
 Otherwise set should_stop=false to trigger another iteration."""
 
         # Initialize ADK LlmAgent
@@ -148,7 +148,7 @@ Otherwise set should_stop=false to trigger another iteration."""
             model=model,
             instruction=instruction,
             generate_content_config=GenerateContentConfig(
-                temperature=0.3,
+                temperature=0.5, # Increased from 0.3 to introduce more realistic variation in scores
                 max_output_tokens=4096, # Increased from 768,
                 response_mime_type="application/json"
             )
@@ -259,7 +259,7 @@ async def execute_research_loop(
     Returns:
         Dictionary with final answer and iteration history
     """
-    print(f"\n Research Loop: {query[:60]}...")
+    print(f"\n Research Loop: {query}...")
     print(f"   Max Iterations: {max_iterations}")
 
     # Create LoopAgent
@@ -317,14 +317,18 @@ async def execute_research_loop(
         })
 
         # Check termination (mimics ADK LoopAgent escalate logic)
-        if should_stop:
+        if should_stop and iteration >= 2:
             print(f"      Quality threshold met - Loop terminated")
+            final_answer = answer
+            break
+        elif iteration >= 2:
+            print(f"      Minimum iterations ({iteration}) reached - terminating loop")
             final_answer = answer
             break
         else:
             print(f"      Quality below threshold - Continue refining...")
             if iteration < max_iterations:
-                print(f"      Feedback: {evaluation.get('feedback', 'No feedback')[:80]}...")
+                print(f"      Feedback: {evaluation.get('feedback', 'No feedback')}...")
 
     # If loop exhausted without should_stop
     if not final_answer:

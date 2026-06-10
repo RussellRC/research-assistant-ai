@@ -304,7 +304,7 @@ Output format (JSON):
     }
   ],
   "bibliography": "Complete bibliography in APA format",
-  "total_citations": 10,
+  "total_citations": N,
   "citation_style": "APA"
 }"""
 
@@ -315,7 +315,7 @@ Output format (JSON):
             instruction=instruction,
             generate_content_config=GenerateContentConfig(
                 temperature=0.1,
-                max_output_tokens=4096, # Increased from 1536
+                max_output_tokens=8192, # Increased from 1536
                 response_mime_type="application/json"
             )
         )
@@ -331,12 +331,13 @@ Output format (JSON):
             Formatted citations
         """
         top_sources = sources.get('aggregated_sources', {}).get('top_sources', [])
+        simplified_sources = [{"title": s.get("title"), "url": s.get("url")} for s in top_sources[:10]]
 
-        prompt = f"""{self.instruction}
-
-user: Generate citations for these sources:
-
-{json.dumps(top_sources[:10], indent=2)}"""
+        prompt = (
+            f"{self.instruction}\n",
+            "user: Generate citations for these sources (in JSON format):\n",
+            f"{json.dumps(simplified_sources, indent=2)}"
+        )
 
         response = client.models.generate_content(
             model=self.model,
