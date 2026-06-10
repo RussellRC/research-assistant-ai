@@ -165,7 +165,8 @@ async def execute_research_workflow(
         "sources_found": sources['aggregated_sources'].get('total_sources', 0),
         "iterations": research["iterations_run"],
         "fact_checks": len(fact_check.get('verified_claims', [])) + len(
-            fact_check.get('questionable_claims', []))
+            fact_check.get('questionable_claims', [])),
+        "citations_count": citations.get('total_citations', 0)
     }
 
     print("\n" + "="*80)

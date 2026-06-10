@@ -262,18 +262,47 @@ Select the top 10-15 most relevant sources."""
             instruction=instruction,
             generate_content_config=GenerateContentConfig(
                 temperature=0.3,
-                max_output_tokens=4096, # Increased from 2048
+                max_output_tokens=8192, # Increased from 4096
                 response_mime_type="application/json"
             )
         )
 
     def aggregate(self, client: genai.Client, search_results: List[Dict[str, Any]]) -> Dict[str, Any]:
         """Aggregate results from multiple searches using direct genai.Client call (execution)."""
-        prompt = f"""{self.instruction}
 
-user: Please aggregate these search results:
+        # Simplify results to reduce prompt size and prevent truncation
+        simplified_results = []
+        for res in search_results:
+            if res.get('source_type') == 'web':
+                for item in res.get('results', []):
+                    simplified_results.append({
+                        "title": item.get("title"),
+                        "url": item.get("url"),
+                        "snippet": item.get("snippet"),
+                        "type": "web"
+                    })
+            elif res.get('source_type') == 'arxiv':
+                for item in res.get('results', []):
+                    simplified_results.append({
+                        "title": item.get("title"),
+                        "url": item.get("url"),
+                        "abstract": item.get("abstract")[:500], # Truncate long abstracts
+                        "type": "arxiv"
+                    })
+            elif res.get('source_type') == 'scholar':
+                for item in res.get('results', []):
+                    simplified_results.append({
+                        "title": item.get("title"),
+                        "url": item.get("url"),
+                        "snippet": item.get("snippet"),
+                        "type": "scholar"
+                    })
 
-{json.dumps(search_results, indent=2)}"""
+        prompt = (
+            f"{self.instruction}\n",
+            "user: Please aggregate these search results:"
+            f"{json.dumps(simplified_results, indent=2)}"""
+        )
 
         response = client.models.generate_content(
             model=self.model,
@@ -324,7 +353,7 @@ def create_source_gathering_workflow(model: str = "gemini-2.5-flash") -> Sequent
     # This is the "fan-out" part of the fan-out/fan-in pattern.
 
     parallel_searches = ParallelAgent(
-        name="parallel_searches",
+        name="parallel_source_searches",
         sub_agents=[web_search, arxiv_search, scholar_search]
     )
 
