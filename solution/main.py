@@ -47,7 +47,7 @@ async def main():
 
     # Sample research queries
     queries = [
-        # "What are the latest advances in quantum computing error correction?",
+        "What are the latest advances in quantum computing error correction?",
         "How does machine learning improve code review efficiency?",
         "What are the health impacts of microplastics in marine ecosystems?",
         "What are the latest types of computer memory?"
