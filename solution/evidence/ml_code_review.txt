@@ -15,6 +15,8 @@ AI RESEARCH ASSISTANT
 
 📝 Sample Research Queries:
    1. How does machine learning improve code review efficiency?
+   2. What are the health impacts of microplastics in marine ecosystems?
+   3. What are the latest types of computer memory?
 
 💡 To research a different topic:
    • Edit queries list in main.py
@@ -58,17 +60,17 @@ STAGE 2: Source Gathering
 
    Stage 1: ParallelAgent (fan-out)
       → web_search running...
-      ✓ web_search: Found 8 sources
+      ✓ web_search: Found 7 sources
       → arxiv_search running...
       ✓ arxiv_search: Found 7 sources
       → scholar_search running...
-      ✓ scholar_search: Found 7 sources
+      ✓ scholar_search: Found 8 sources
 
    Stage 2: Aggregator (fan-in)
       → source_aggregator aggregating results...
       ✓ Total: 22 sources
-      ✓ Unique: 22 sources
-      ✓ Top sources: 16
+      ✓ Unique: 18 sources
+      ✓ Top sources: 15
    ✅ Workflow execution completed
 
 --------------------------------------------------------------------------------
@@ -87,9 +89,9 @@ STAGE 3: Research Refinement
       → researcher generating answer...
       ✓ Answer generated (confidence: high)
       → critic evaluating quality...
-      ✓ Quality: excellent (score: 0.92)
+      ✓ Quality: excellent (score: 0.96)
       Quality below threshold - Continue refining...
-      Feedback: The answer is exceptionally well-done, providing a comprehensive, accurate, and well-structured explanation of how machine learning improves code review efficiency. The inclusion of specific examples and the breakdown into key points with detailed explanations are major strengths. To make it even more robust and demonstrate a deeper understanding, consider briefly acknowledging potential challenges or limitations of ML in code review, such as the need for extensive training data, the risk of false positives, or the difficulty in explaining complex ML decisions. This would offer a more balanced and nuanced perspective....
+      Feedback: The answer is exceptionally well-structured, comprehensive, and accurate. It effectively details multiple distinct ways machine learning enhances code review efficiency, providing clear explanations and relevant examples for each point. The initial summary sets the stage perfectly, and the 'Key Points' elaborate with impressive depth. There are no noticeable inaccuracies or significant omissions given the scope of the question....
 
    Iteration 2/3
       → researcher generating answer...
@@ -102,87 +104,23 @@ STAGE 3: Research Refinement
 --------------------------------------------------------------------------------
 STAGE 4: Fact Checking (LlmAgent)
 --------------------------------------------------------------------------------
-   ✓ Credibility Score: 0.85
-   ✓ Verified Claims: 24
-   ✓ Questionable Claims: 3
+   ✓ Credibility Score: 0.90
+   ✓ Verified Claims: 16
+   ✓ Questionable Claims: 1
 
 --------------------------------------------------------------------------------
 STAGE 5: Synthesis (LlmAgent)
 --------------------------------------------------------------------------------
    ✓ Synthesis completed
    ✓ Key Insights: 4
-   ✓ Themes: 3
-   ✓ Coherence Score: 0.90
+   ✓ Themes: 4
+   ✓ Coherence Score: 0.95
 
 --------------------------------------------------------------------------------
 STAGE 6: Citation Generation (LlmAgent)
 --------------------------------------------------------------------------------
-JSONDecodeError in CitationAgent.format_citations: {
-  "citations": [
-    {
-      "source_title": "Boosting Code Review Efficiency with Deep Learning-based Defect Prediction",
-      "citation_apa": "*Boosting Code Review Efficiency with Deep Learning-based Defect Prediction*. (2023). arXiv. arXiv:2311.04567. https://arxiv.org/abs/2311.04567",
-      "citation_mla": "\"Boosting Code Review Efficiency with Deep Learning-based Defect Prediction.\" *arXiv*, 2023, arXiv:2311.04567. https://arxiv.org/abs/2311.04567",
-      "citation_number": 1
-    },
-    {
-      "source_title": "AI-Powered Reviewer Recommendation for Optimized Code Review Workflows",
-      "citation_apa": "*AI-Powered Reviewer Recommendation for Optimized Code Review Workflows*. (2024). arXiv. arXiv:2402.01234. https://arxiv.org/abs/2402.01234",
-      "citation_mla": "\"AI-Powered Reviewer Recommendation for Optimized Code Review Workflows.\" *arXiv*, 2024, arXiv:2402.01234. https://arxiv.org/abs/2402.01234",
-      "citation_number": 2
-    },
-    {
-      "source_title": "Predicting Code Review Effort Using Machine Learning Models and Static Code Metrics",
-      "citation_apa": "*Predicting Code Review Effort Using Machine Learning Models and Static Code Metrics*. (2023). arXiv. arXiv:2309.07890. https://arxiv.org/abs/2309.07890",
-      "citation_mla": "\"Predicting Code Review Effort Using Machine Learning Models and Static Code Metrics.\" *arXiv*, 2023, arXiv:2309.07890. https://arxiv.org/abs/2309.07890",
-      "citation_number": 3
-    },
-    {
-      "source_title": "Leveraging Large Language Models for Automated Code Review Summarization and Critical Change Identification",
-      "citation_apa": "*Leveraging Large Language Models for Automated Code Review Summarization and Critical Change Identification*. (2024). arXiv. arXiv:2401.05678. https://arxiv.org/abs/2401.05678",
-      "citation_mla": "\"Leveraging Large Language Models for Automated Code Review Summarization and Critical Change Identification.\" *arXiv*, 2024, arXiv:2401.05678. https://arxiv.org/abs/2401.05678",
-      "citation_number": 4
-    },
-    {
-      "source_title": "Real-time AI Feedback for Pre-Review Code Quality Improvement",
-      "citation_apa": "*Real-time AI Feedback for Pre-Review Code Quality Improvement*. (2022). arXiv. arXiv:2212.09876. https://arxiv.org/abs/2212.09876",
-      "citation_mla": "\"Real-time AI Feedback for Pre-Review Code Quality Improvement.\" *arXiv*, 2022, arXiv:2212.09876. https://arxiv.org/abs/2212.09876",
-      "citation_number": 5
-    },
-    {
-      "source_title": "An Empirical Study on the Impact of ML-driven Anomaly Detection in Code Review for Security Vulnerabilities",
-      "citation_apa": "*An Empirical Study on the Impact of ML-driven Anomaly Detection in Code Review for Security Vulnerabilities*. (2023). arXiv. arXiv:2307.03456. https://arxiv.org/abs/2307.03456",
-      "citation_mla": "\"An Empirical Study on the Impact of ML-driven Anomaly Detection in Code Review for Security Vulnerabilities.\" *arXiv*, 2023, arXiv:2307.03456. https://arxiv.org/abs/2307.03456",
-      "citation_number": 6
-    },
-    {
-      "source_title": "Optimizing Code Review Rerouting with Reinforcement Learning",
-      "citation_apa": "*Optimizing Code Review Rerouting with Reinforcement Learning*. (2022). arXiv. arXiv:2210.12345. https://arxiv.org/abs/2210.12345",
-      "citation_mla": "\"Optimizing Code Review Rerouting with Reinforcement Learning.\" *arXiv*, 2022, arXiv:2210.12345. https://arxiv.org/abs/2210.12345",
-      "citation_number": 7
-    },
-    {
-      "source_title": "The Impact of Machine Learning on Software Code Review Processes: A Systematic Review",
-      "citation_apa": "*The Impact of Machine Learning on Software Code Review Processes: A Systematic Review*. (n.d.). ACM Digital Library. https://dl.acm.org/doi/10.1145/ml-code-review-systematic-review",
-      "citation_mla": "\"The Impact of Machine Learning on Software Code Review Processes: A Systematic Review.\" *ACM Digital Library*, https://dl.acm.org/doi/10.1145/ml-code-review-systematic-review.",
-      "citation_number": 8
-    },
-    {
-      "source_title": "Machine Learning for Automated Code Reviewer Recommendation and Defect Prediction",
-      "citation_apa": "*Machine Learning for Automated Code Reviewer Recommendation and Defect Prediction*. (n.d.). Google Scholar. https://scholar.google.com/citations?id=mlcrdrdp",
-      "citation_mla": "\"Machine Learning for Automated Code Reviewer Recommendation and Defect Prediction.\" *Google Scholar*, https://scholar.google.com/citations?id=mlcrdrdp.",
-      "citation_number": 9
-    },
-    {
-      "source_title": "Boosting Code Review Efficiency with Deep Learning-Based Bug Detection",
-      "citation_apa": "*Boosting Code Review Efficiency with Deep Learning-Based Bug Detection*. (n.d.). Google Scholar. https://scholar.google.com/citations?id=dlbcdcr",
-      "citation_mla": "\"Boosting Code Review Efficiency with Deep Learning-Based Bug Detection.\" *Google Scholar*, https://scholar.google.com/citations?id=dlbcdcr.",
-      "citation_number": 10
-    }
-  ],
-  "bibliography": "AI-Powered Reviewer Recommendation for Optimized Code Review Workflows. (2024). arXiv. arXiv:2
    ✓ Citations formatted
-   ✓ Total Citations: 0
+   ✓ Total Citations: 10
    ✓ Style: APA
 
 ================================================================================
@@ -196,8 +134,8 @@ WORKFLOW COMPLETED
    • Domain: computer_science
    • Sources Found: 22
    • Research Iterations: 2
-   • Credibility Score: 0.85
-   • Citations: 0
+   • Credibility Score: 0.90
+   • Citations: 10
 
   Execution Method:
    ✓ All agents inherit from ADK base classes
@@ -208,8 +146,8 @@ WORKFLOW COMPLETED
 --------------------------------------------------------------------------------
 STAGE 7: Performance Evaluation
 --------------------------------------------------------------------------------
-   ✓ Execution Time: 204.68s
-   ✓ Performance Score: 0.85
+   ✓ Execution Time: 128.77s
+   ✓ Performance Score: 0.90
    ✓ Health Status: excellent
    ✓ Queries Processed: 1
    ⚠️  Bottlenecks Identified:
@@ -225,10 +163,10 @@ RESEARCH REPORT PREVIEW
 # Research Report: How does machine learning improve code review efficiency?
 
 ## Executive Summary
-Machine learning substantially improves code review efficiency by automating defect detection, optimizing reviewer assignment, and enhancing feedback, thereby reducing human effort and improving code quality, though it faces challenges related to data quality and model explainability.
+Machine learning significantly boosts code review efficiency by automating defect detection, offering intelligent code suggestions, and optimizing reviewer assignments. This empowers human reviewers to focus on complex design and architectural issues, leading to faster cycles and higher code quality.
 
 **Domain:** computer_science
-**Credibility Score:** 0.85/1.00
+**Credibility Score:** 0.90/1.00
 **Sources Consulted:** 22
 **Research Iterations:** 2
 
@@ -236,13 +174,25 @@ Machine learning substantially improves code review efficiency by automating def
 
 ## Research Findings
 
-Machine learning significantly enhances the efficiency and effectiveness of the code review process by automating mundane tasks, elevating defect detection capabilities, and optimizing resource utilization. By leveraging extensive datasets of code and review interactions, ML models can discern patterns indicative of various issues, from security vulnerabilities and bugs to code smells and style violations. This advanced capability often surpasses traditional rule-based static analysis, enabling the automatic identification of defects and thereby reducing the manual burden on human reviewers, allowing them to concentrate on intricate logical flaws, architectural integrity, and design principles.
+Machine learning significantly enhances code review efficiency by automating mundane and repetitive tasks, proactively identifying potential issues, and providing intelligent assistance to human reviewers. This leads to faster review cycles, higher overall code quality, and reduced development costs. By analyzing vast amounts of historical code data, ML models can learn and apply patterns associated with bugs, vulnerabilities, code smells, and best practices, thereby streamlining the entire code review process and allowing human experts to focus on higher-level, complex logical and architectural considerations.
 
-Furthermore, ML algorithms contribute to operational efficiency through intelligent reviewer assignment and prioritization. By analyzing factors such as code ownership, historical review patterns, and commit content, these systems can recommend the most appropriate reviewers, ensuring specialized expertise is applied where needed and accelerating feedback cycles. Concurrently, ML enhances the quality and consistency of feedback by generating context-aware suggestions, summarizing code changes, and even suggesting auto-corrections, thus minimizing the iterative communication between authors and reviewers. This comprehensive support drastically reduces the cognitive load on reviewers, fostering a more sustainable and less fatiguing review environment.
+---
 
-Desp
+## Key Insights
 
-... (report continues, total 6817 characters)
+1. ML models can accurately detect common defects, security vulnerabilities, and performance anti-patterns, often outperforming traditional static analysis tools and reducing the human burden.
+2. ML provides context-aware suggestions for code improvements, refactoring, and adherence to coding standards, reducing cognitive load and improving code consistency.
+3. Machine learning algorithms can optimize the review process by suggesting the most suitable reviewers based on expertise and prioritizing critical issues.
+4. Automation of repetitive checks by ML frees human reviewers to concentrate on complex design flaws, architectural consistency, and business logic validation, leading to more thorough and insightful reviews.
+
+---
+
+## Major Themes
+
+- Automation of Repetitive Tasks
+- Intelligent Code Analysis
+
+... (report continues, total 5770 characters)
 
 Full report saved to: /Users/russell/Workspace/research-assistant-ai/solution/research_report.md
 
@@ -254,8 +204,8 @@ EXECUTION SUMMARY
    • Total Stages: 6
    • Research Iterations: 2
    • Sources Found: 22
-   • Credibility Score: 0.85
-   • Citations: 0
+   • Credibility Score: 0.90
+   • Citations: 10
 
  Execution successful!
 (.venv) russell solution %

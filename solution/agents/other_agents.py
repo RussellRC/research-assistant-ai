@@ -1,8 +1,26 @@
 import json
-from typing import Dict, Any
+from typing import Dict, Any, Union
 from google.adk.agents import LlmAgent
 from google import genai
-from google.genai.types import GenerateContentConfig
+from google.genai.types import GenerateContentConfig, ThinkingConfig
+
+
+def _safe_parse_json(text: str) -> Any:
+    """Attempts to parse JSON, even if it is truncated."""
+    try:
+            return json.loads(text)
+    except (json.JSONDecodeError, TypeError):
+        # Clean up trailing whitespace/newlines
+        if not isinstance(text, str):
+            raise
+        cleaned = text.strip()
+        # Try appending common closing sequences for truncated JSON
+        for suffix in ['"', '}', ']', '"}', '"]', '"}]']:
+            try:
+                return json.loads(cleaned + suffix)
+            except json.JSONDecodeError:
+                continue
+        raise
 
 
 class DomainClassifierAgent(LlmAgent):
@@ -77,13 +95,13 @@ Output format (JSON):
         )
 
         try:
-            result = json.loads(response.text)
+            result = _safe_parse_json(response.text)
             result['_metadata'] = {
                 'agent': self.name,
                 'execution': 'direct_genai_client'
             }
             return result
-        except json.JSONDecodeError:
+        except (json.JSONDecodeError, TypeError):
             print(f"JSONDecodeError in DomainClassifierAgent.classify: {response.text}")
             return {
                 'domain': 'general',
@@ -164,13 +182,13 @@ Key Points: {json.dumps(answer.get('key_points', []))}
         )
 
         try:
-            result = json.loads(response.text)
+            result = _safe_parse_json(response.text)
             result['_metadata'] = {
                 'agent': self.name,
                 'execution': 'direct_genai_client'
             }
             return result
-        except json.JSONDecodeError:
+        except (json.JSONDecodeError, TypeError):
             print(f"JSONDecodeError in FactCheckAgent.check: {response.text}")
             return {
                 'verified_claims': [],
@@ -195,18 +213,17 @@ class SynthesisAgent(LlmAgent):
         instruction = """You are a research synthesis specialist.
 
 Your role:
-1. Combine findings from multiple sources
-2. Create coherent narrative structure
-3. Identify key themes and insights
-4. Maintain academic tone
-5. Provide actionable recommendations
+1. Synthesize multiple research findings into a coherent answer
+2. Identify themes and key insights
+3. Provide actionable recommendations
+4. Evaluate the overall coherence of the synthesized information
 
 Output format (JSON):
 {
-  "synthesis": "Comprehensive narrative combining all findings (3-5 paragraphs)",
-  "key_insights": ["Main insight 1", "Main insight 2", "Main insight 3"],
-  "themes": ["Major theme 1", "Major theme 2"],
-  "recommendations": ["Actionable recommendation 1", "Actionable recommendation 2"],
+  "synthesis": "The synthesized research answer",
+  "key_insights": ["Insight 1", "Insight 2"],
+  "themes": ["Theme 1", "api: Theme 2"],
+  "recommendations": ["Recommendation 1", "Recommendation 2"],
   "coherence_score": 0.9,
   "executive_summary": "1-2 sentence summary"
 }"""
@@ -258,13 +275,13 @@ Top Sources: {len(sources.get('aggregated_sources', {}).get('top_sources', []))}
         )
 
         try:
-            result = json.loads(response.text)
+            result = _safe_parse_json(response.text)
             result['_metadata'] = {
                 'agent': self.name,
                 'execution': 'direct_genai_client'
             }
             return result
-        except json.JSONDecodeError:
+        except (json.JSONDecodeError, TypeError):
             print(f"JSONDecodeError in SynthesisAgent.synthesize: {response.text}")
             return {
                 'synthesis': answer.get('answer', 'Synthesis failed'),
@@ -316,7 +333,9 @@ Output format (JSON):
             generate_content_config=GenerateContentConfig(
                 temperature=0.1,
                 max_output_tokens=8192, # Increased from 1536
-                response_mime_type="application/json"
+                response_mime_type="application/json",
+                # Turn thinking completely off as it counts towards max_output_tokens budget.
+                thinking_config=ThinkingConfig(thinking_budget=0)
             )
         )
 
@@ -334,8 +353,8 @@ Output format (JSON):
         simplified_sources = [{"title": s.get("title"), "url": s.get("url")} for s in top_sources[:10]]
 
         prompt = (
-            f"{self.instruction}\n",
-            "user: Generate citations for these sources (in JSON format):\n",
+            f"{self.instruction}\n"
+            "user: Generate citations for these sources (in JSON format):\n"
             f"{json.dumps(simplified_sources, indent=2)}"
         )
 
@@ -346,14 +365,14 @@ Output format (JSON):
         )
 
         try:
-            result = json.loads(response.text)
+            result = _safe_parse_json(response.text)
             result['_metadata'] = {
                 'agent': self.name,
                 'execution': 'direct_genai_client'
             }
             return result
-        except json.JSONDecodeError:
-            print(f"JSONDecodeError in CitationAgent.format_citations: {response.text}")
+        except (json.JSONDecodeError, TypeError):
+            print(f"JSON/Parsing error in CitationAgent.format_citations: {response.text}")
             return {
                 'citations': [],
                 'bibliography': '',
