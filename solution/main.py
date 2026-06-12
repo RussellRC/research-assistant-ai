@@ -13,9 +13,11 @@ async def main():
     print("="*80)
   
     print(f"\n Configuration:")
+    print(f"   Application Credentials: {config.application_credentials or 'NOT SET'}")
     print(f"   Project ID: {config.project_id or 'NOT SET'}")
     print(f"   Location: {config.location}")
     print(f"   Model: {config.model_name}")
+    print(f"   Use Vertex AI: {config.use_vertex_ai}")
 
     # Initialize genai client
     print(f"\n🔧 Initializing genai.Client...")
@@ -47,7 +49,7 @@ async def main():
 
     # Sample research queries
     queries = [
-        "What are the latest advances in quantum computing error correction?",
+        # "What are the latest advances in quantum computing error correction?",
         "How does machine learning improve code review efficiency?",
         "What are the health impacts of microplastics in marine ecosystems?",
         "What are the latest types of computer memory?"

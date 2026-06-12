@@ -26,15 +26,18 @@ python -m venv .venv
 ```
 
 **3\. Add a `.env` file** inside the `solution` directory.\
-File must have the following variables:
+File MUST have the following variables:
+
 ```dotenv
 # Google Cloud Configuration
 GOOGLE_APPLICATION_CREDENTIALS=path/to/service-account-key.json
-PROJECT_ID=your-project-id
-LOCATION=us-central1
+GOOGLE_CLOUD_PROJECT=your-project-id
+GOOGLE_CLOUD_LOCATION=us-central1
+GOOGLE_GENAI_USE_VERTEXAI=true
 
 MODEL_NAME=gemini-2.5-flash
 ```
+
 
 ## Project Structure
 
@@ -74,11 +77,8 @@ gave to the answers from the `ResearcherAgent` were quite high (usually `>=0.90`
 `0.80`.
 
 As such, I increased the temperature of the `ResearchCriticAgent` to `0.5` to introduce more realistic variation in scores,
-and also increased the `should_stop` threshold to `0.95`; but even then, the research loop rarely needed more than one iteration.
+and also increased the `should_stop` threshold to `0.95`.
 
-In the end, I added a hard minimum of two iterations to the `Researcher → Critic` loop, which sometimes does
-improve the `quality_score` of the research answers slightly. See:
-* Improved quality score from `0.92` in the first iteration, to `0.96` in the second iteration of the execution output file: [evidence/ml_code_review.txt](solution/evidence/ml_code_review.txt).
 
 #### Agent performance
 The whole course, as well as the starter code of this project, use `gemini-2.0-*` models. 

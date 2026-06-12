@@ -1,8 +1,12 @@
 import json
+import time
+import uuid
 from typing import Dict, Any, List
 from google.adk.agents import LlmAgent, LoopAgent
 from google import genai
-from google.genai.types import GenerateContentConfig
+from google.adk.runners import InMemoryRunner
+from google.adk.sessions import InMemorySessionService
+from google.genai.types import GenerateContentConfig, Content, Part
 
 
 class ResearcherAgent(LlmAgent):
@@ -44,7 +48,7 @@ Focus on accuracy, clarity, and continuous improvement. Each iteration should sh
             instruction=instruction,
             generate_content_config=GenerateContentConfig(
                 temperature=0.7,
-                max_output_tokens=4096, # Increased from 1024
+                max_output_tokens=8192,  # Increased from 1024
                 response_mime_type="application/json"
             )
         )
@@ -148,8 +152,8 @@ Otherwise set should_stop=false to trigger another iteration."""
             model=model,
             instruction=instruction,
             generate_content_config=GenerateContentConfig(
-                temperature=0.5, # Increased from 0.3 to introduce more realistic variation in scores
-                max_output_tokens=4096, # Increased from 768,
+                temperature=0.5,  # Increased from 0.3 to introduce more realistic variation in scores
+                max_output_tokens=8192,  # Increased from 768,
                 response_mime_type="application/json"
             )
         )
@@ -207,12 +211,14 @@ Confidence: {answer.get('confidence', 'unknown')}"""
             }
 
 
-def create_research_loop_agent(model: str = "gemini-2.5-flash",
-                                max_iterations: int = 3) -> LoopAgent:
+def create_research_loop_agent(
+        model: str = "gemini-2.5-flash",
+        max_iterations: int = 3) -> LoopAgent:
     """
     Creates a LoopAgent for iterative research refinement.
 
     Args:
+        client: Configured genai.Client
         model: Gemini model to use
         max_iterations: Maximum loop iterations (safety limit)
 
@@ -242,10 +248,10 @@ def create_research_loop_agent(model: str = "gemini-2.5-flash",
 
 
 async def execute_research_loop(
-    client: genai.Client,
-    query: str,
-    max_iterations: int = 3,
-    model: str = "gemini-2.5-flash"
+        client: genai.Client,
+        query: str,
+        max_iterations: int = 3,
+        model: str = "gemini-2.5-flash"
 ) -> Dict[str, Any]:
     """
     Execute iterative research refinement using ADK LoopAgent.
@@ -259,7 +265,7 @@ async def execute_research_loop(
     Returns:
         Dictionary with final answer and iteration history
     """
-    print(f"\n Research Loop: {query}...")
+    print(f"\n Research Loop: {query}")
     print(f"   Max Iterations: {max_iterations}")
 
     # Create LoopAgent
@@ -346,3 +352,80 @@ async def execute_research_loop(
         'pattern': 'ADK LoopAgent',
         'execution_mode': 'direct'
     }
+
+
+async def execute_research_loop_with_runner(
+        client: genai.Client,  # Kept for orchestrator.py compatibility
+        query: str,
+        max_iterations: int = 3,
+        model: str = "gemini-2.5-flash"
+) -> Dict[str, Any]:
+    """
+    Execute iterative research refinement using ADK InMemoryRunner.
+    """
+    print(f"\n Research Loop: {query}...")
+    print(f"   Max Iterations: {max_iterations}")
+
+    # 1. Create the configured LoopAgent
+    loop_agent = create_research_loop_agent(model=model, max_iterations=max_iterations)
+
+    print(f"   Created LoopAgent: {loop_agent.name}")
+    print(f"   🔄 Executing LoopAgent via InMemoryRunner...")
+
+    # 2. Instantiate the ADK Runner (strictly just the agent)
+    runner = InMemoryRunner(agent=loop_agent)
+
+    try:
+        # 1. Capture the array of Event objects
+        response_events = await runner.run_debug(query)
+        print(f"   ✓ InMemoryRunner execution completed successfully.")
+
+        final_answer_text = None
+        actual_iterations = 0
+
+        # 2. Iterate through the events to find the final output
+        for event in response_events:
+            # Check the agent name and the role to ensure it's an actual model generation
+            agent_name = getattr(event, 'author', getattr(event, 'agent_name', ''))
+            content_role = getattr(event.content, 'role', '') if hasattr(event, 'content') else ''
+
+            if agent_name == 'critic' and content_role == 'model':
+                actual_iterations += 1
+
+            # Check if this is the researcher final answer
+            if agent_name == 'researcher' and hasattr(event, 'is_final_response') and event.is_final_response():
+                if hasattr(event, 'content') and event.content and hasattr(event.content, 'parts'):
+                    final_answer_text = event.content.parts[0].text
+
+        # 3. Parse JSON string
+        final_answer = final_answer_text
+        if isinstance(final_answer_text, str):
+            try:
+                # Strip out potential markdown formatting (e.g., ```json ... ```)
+                clean_text = final_answer_text.strip()
+                clean_text = clean_text.removeprefix("```json").removesuffix("```").strip()
+                final_answer = json.loads(clean_text)
+            except json.JSONDecodeError as e:
+                print(f"JSON parsing failed in execute_research_loop_with_runner: {str(e)}")
+                final_answer = '"JSON parsing failed"'
+
+        return {
+            'query': query,
+            'final_answer': final_answer,
+            'iterations_run': actual_iterations,
+            'loop_agent': loop_agent,
+            'pattern': 'ADK LoopAgent',
+            'execution_mode': 'InMemoryRunner'
+        }
+
+    except Exception as e:
+        print(f"   ❌ Runner execution failed: {e}")
+        return {
+            'query': query,
+            'final_answer': {},
+            'iterations_run': 0,
+            'loop_agent': loop_agent,
+            'error': str(e),
+            'pattern': 'ADK LoopAgent',
+            'execution_mode': 'InMemoryRunner'
+        }

@@ -68,7 +68,7 @@ Be rigorous but acknowledge the limits of knowledge-based verification."""
             instruction=instruction,
             generate_content_config=GenerateContentConfig(
                 temperature=0.2,
-                max_output_tokens=4096, # Increased from 1024
+                max_output_tokens=16384, # Increased from 1024
                 response_mime_type="application/json"
             )
         )

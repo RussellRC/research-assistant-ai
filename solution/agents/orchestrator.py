@@ -1,8 +1,8 @@
 import time
 from typing import Dict, Any
 from google import genai
-from agents.researcher import execute_research_loop
-from agents.source_gatherer import execute_source_gathering
+from agents.researcher import execute_research_loop, execute_research_loop_with_runner
+from agents.source_gatherer import execute_source_gathering, execute_source_gathering_adk
 from agents.other_agents import (
     DomainClassifierAgent,
     FactCheckAgent,
@@ -80,7 +80,7 @@ async def execute_research_workflow(
     print("STAGE 2: Source Gathering")
     print("-"*80)
 
-    sources = await execute_source_gathering(client=client, query=query, model=model)
+    sources = await execute_source_gathering_adk(client=client, query=query, model=model)
     workflow_results['stage_2_sources'] = sources
 
     # ========================================================================
@@ -90,7 +90,7 @@ async def execute_research_workflow(
     print("STAGE 3: Research Refinement")
     print("-"*80)
 
-    research = await execute_research_loop(
+    research = await execute_research_loop_with_runner(
         client=client,
         query=query,
         max_iterations=max_iterations,

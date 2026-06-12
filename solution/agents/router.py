@@ -69,7 +69,7 @@ Be precise in classification but acknowledge uncertainty when present."""
             instruction=instruction,
             generate_content_config=GenerateContentConfig(
                 temperature=0.3, # Low temperature for consistent classification
-                max_output_tokens=4096, # Increased from 1024
+                max_output_tokens=8192, # Increased from 1024
                 response_mime_type="application/json"
             )
         )
@@ -125,7 +125,7 @@ Use this to help allocate appropriate resources for each query."""
             instruction=instruction,
             generate_content_config=GenerateContentConfig(
                 temperature=0.2,
-                max_output_tokens=4096, # Increased from 384
+                max_output_tokens=8192, # Increased from 384
                 response_mime_type="application/json"
             )
         )

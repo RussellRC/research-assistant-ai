@@ -60,7 +60,7 @@ Create publication-quality research syntheses that are clear, accurate, and insi
             instruction=instruction,
             generate_content_config=GenerateContentConfig(
                 temperature=0.5,
-                max_output_tokens=4096, # Increased from 2048
+                max_output_tokens=8192, # Increased from 2048
                 response_mime_type="application/json"
             )
         )
@@ -119,7 +119,7 @@ Generate accurate, properly formatted citations for all sources."""
             instruction=instruction,
             generate_content_config=GenerateContentConfig(
                 temperature=0.1,
-                max_output_tokens=4096, # Increased from 1024
+                max_output_tokens=8192, # Increased from 1024
                 response_mime_type="application/json"
             )
         )
