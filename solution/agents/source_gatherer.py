@@ -488,9 +488,14 @@ async def execute_source_gathering_adk(
 
     # Get the sub-agents from SequentialAgent
     parallel_stage = workflow.sub_agents[0]  # ParallelAgent
+    aggregator = workflow.sub_agents[1]      # AggregatorAgent
+    print(f"   Stage 1 (ParallelAgent): {parallel_stage.name}")
+    print(f"      → Type: {type(parallel_stage).__name__}")
+    print(f"      → Sub-agents: {len(parallel_stage.sub_agents)} parallel searches")
+    print(f"   Stage 2 (Aggregator): {aggregator.name}")
+    print(f"      → Type: {type(aggregator).__name__}")
 
-    print(f"   Created SequentialAgent: {workflow.name}")
-    print(f"   🔄 Executing Workflow via InMemoryRunner...")
+    print(f"   🔄 Executing Source Gathering Workflow via InMemoryRunner...")
 
     # 2. Instantiate the ADK Runner
     runner = InMemoryRunner(agent=workflow)

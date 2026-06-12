@@ -370,7 +370,8 @@ async def execute_research_loop_with_runner(
     loop_agent = create_research_loop_agent(model=model, max_iterations=max_iterations)
 
     print(f"   Created LoopAgent: {loop_agent.name}")
-    print(f"   🔄 Executing LoopAgent via InMemoryRunner...")
+    print(f"   Type: {type(loop_agent).__name__}")
+    print(f"   🔄 Executing Iterative Research Refinement LoopAgent via InMemoryRunner...")
 
     # 2. Instantiate the ADK Runner (strictly just the agent)
     runner = InMemoryRunner(agent=loop_agent)
