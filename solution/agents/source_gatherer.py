@@ -3,7 +3,8 @@ import asyncio
 from typing import Dict, Any, List
 from google.adk.agents import LlmAgent, ParallelAgent, SequentialAgent
 from google import genai
-from google.genai.types import GenerateContentConfig
+from google.adk.runners import InMemoryRunner
+from google.genai.types import GenerateContentConfig, ThinkingConfig
 
 
 class WebSearchAgent(LlmAgent):
@@ -41,7 +42,7 @@ Output format (JSON):
             instruction=instruction,
             generate_content_config=GenerateContentConfig(
                 temperature=0.8,
-                max_output_tokens=4096, # Increased from 1024
+                max_output_tokens=8192, # Increased from 1024
                 response_mime_type="application/json"
             )
         )
@@ -112,7 +113,7 @@ Output format (JSON):
             instruction=instruction,
             generate_content_config=GenerateContentConfig(
                 temperature=0.8,
-                max_output_tokens=4096, # Increased from 1024
+                max_output_tokens=8192, # Increased from 1024
                 response_mime_type="application/json"
             )
         )
@@ -185,7 +186,7 @@ Output format (JSON):
             instruction=instruction,
             generate_content_config=GenerateContentConfig(
                 temperature=0.8,
-                max_output_tokens=8192, # Increased from 1024
+                max_output_tokens=16384, # Increased from 1024
                 response_mime_type="application/json"
             )
         )
@@ -262,8 +263,10 @@ Select the top 10-15 most relevant sources."""
             instruction=instruction,
             generate_content_config=GenerateContentConfig(
                 temperature=0.3,
-                max_output_tokens=8192, # Increased from 4096
-                response_mime_type="application/json"
+                max_output_tokens=16384, # Increased from 4096
+                response_mime_type="application/json",
+                # Turn thinking completely off as it counts towards max_output_tokens budget.
+                thinking_config=ThinkingConfig(thinking_budget=0)
             )
         )
 
@@ -463,4 +466,94 @@ async def execute_source_gathering(
         'parallel_agent': parallel_stage,  # Include the actual ParallelAgent object
         'pattern': 'ADK ParallelAgent + SequentialAgent',
         'execution_mode': 'direct'
+    }
+
+
+async def execute_source_gathering_adk(
+        client: genai.Client,  # Kept for orchestrator.py compatibility
+        query: str,
+        model: str = "gemini-2.5-flash"
+) -> Dict[str, Any]:
+    """
+    Execute the source gathering workflow using ADK InMemoryRunner natively.
+
+    The runner handles the fan-out (ParallelAgent) and fan-in (SequentialAgent)
+    automatically without requiring manual asyncio.gather blocks.
+    """
+    print(f"\n Source Gathering: {query[:60]}...")
+    print(f"   Pattern: ADK ParallelAgent + SequentialAgent (InMemoryRunner)")
+
+    # 1. Create the configured SequentialAgent (contains the ParallelAgent and Aggregator)
+    workflow = create_source_gathering_workflow(model=model)
+
+    # Get the sub-agents from SequentialAgent
+    parallel_stage = workflow.sub_agents[0]  # ParallelAgent
+
+    print(f"   Created SequentialAgent: {workflow.name}")
+    print(f"   🔄 Executing Workflow via InMemoryRunner...")
+
+    # 2. Instantiate the ADK Runner
+    runner = InMemoryRunner(agent=workflow)
+
+    try:
+        # 3. Capture the execution trace
+        response_events = await runner.run_debug(query)
+        print(f"   ✓ InMemoryRunner execution completed successfully.")
+
+        search_results = []
+        aggregated = ""
+
+        # 4. Iterate through events to capture sub-agent outputs and final aggregation
+        for event in response_events:
+            # Safely get the agent name (some ADK versions use 'author', others use 'agent_name')
+            agent_name = getattr(event, 'author', getattr(event, 'agent_name', ''))
+            content_role = getattr(event.content, 'role', '') if hasattr(event, 'content') else ''
+
+            # Capture outputs from the parallel search agents
+            if agent_name in ['web_search', 'arxiv_search', 'scholar_search'] and content_role == 'model':
+                if hasattr(event.content, 'parts') and event.content.parts:
+                    text = event.content.parts[0].text
+                    search_results.append(text)
+
+            elif agent_name == 'source_aggregator':
+                if hasattr(event.content, 'parts') and event.content.parts:
+                    final_aggregated_text = event.content.parts[0].text
+                    try:
+                        # Strip out potential markdown formatting (e.g., ```json ... ```)
+                        clean_text = final_aggregated_text.strip()
+                        clean_text = clean_text.removeprefix("```json").removesuffix("```").strip()
+                        aggregated = json.loads(clean_text)
+                    except json.JSONDecodeError as e:
+                        print(f"JSON parsing failed in execute_research_loop_with_runner: {str(e)}")
+                        aggregated = '"JSON parsing failed"'
+    except ExceptionGroup as eg:
+        print(f"   ❌ Runner execution failed: {eg}")
+        for exc in eg.exceptions:
+            print(f"Sub-exception detail: {exc}")
+    except Exception as e:
+        print(f"   ❌ Runner execution failed: {e}")
+        return {
+            'query': query,
+            'raw_searches': [],
+            'aggregated_sources': {},
+            'workflow': workflow,
+            'parallel_agent': parallel_stage,
+            'pattern': 'ADK ParallelAgent + SequentialAgent',
+            'execution_mode': 'InMemoryRunner'
+        }
+
+    print(f"      ✓ Total: {aggregated.get('total_sources', 0)} sources")
+    print(f"      ✓ Unique: {aggregated.get('unique_sources', 0)} sources")
+    print(f"      ✓ Top sources: {len(aggregated.get('top_sources', []))}")
+
+    print(f"   ✅ Workflow execution completed")
+
+    return {
+        'query': query,
+        'raw_searches': search_results,
+        'aggregated_sources': aggregated,
+        'workflow': workflow,
+        'parallel_agent': parallel_stage,
+        'pattern': 'ADK ParallelAgent + SequentialAgent',
+        'execution_mode': 'InMemoryRunner'
     }

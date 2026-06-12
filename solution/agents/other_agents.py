@@ -68,7 +68,7 @@ Output format (JSON):
             instruction=instruction,
             generate_content_config=GenerateContentConfig(
                 temperature=0.3,
-                max_output_tokens=4096, # Increased from 512
+                max_output_tokens=8192, # Increased from 512
                 response_mime_type="application/json"
             )
         )
@@ -148,7 +148,7 @@ Output format (JSON):
             instruction=instruction,
             generate_content_config=GenerateContentConfig(
                 temperature=0.3,
-                max_output_tokens=4096, # Increased from 1024
+                max_output_tokens=8192, # Increased from 1024
                 response_mime_type="application/json"
             )
         )
@@ -235,7 +235,7 @@ Output format (JSON):
             instruction=instruction,
             generate_content_config=GenerateContentConfig(
                 temperature=0.7,
-                max_output_tokens=4096, # Increased from 2048
+                max_output_tokens=8192, # Increased from 2048
                 response_mime_type="application/json"
             )
         )
@@ -332,7 +332,7 @@ Output format (JSON):
             instruction=instruction,
             generate_content_config=GenerateContentConfig(
                 temperature=0.1,
-                max_output_tokens=8192, # Increased from 1536
+                max_output_tokens=16384, # Increased from 1536
                 response_mime_type="application/json",
                 # Turn thinking completely off as it counts towards max_output_tokens budget.
                 thinking_config=ThinkingConfig(thinking_budget=0)
